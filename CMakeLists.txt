@@ -11,6 +11,7 @@ add_executable(dungeon
     src/Enemy.cpp
     src/GameStateManager.cpp
     src/PlayState.cpp
+    src/Tilemap.cpp
 )
 
 target_link_libraries(dungeon SFML::Graphics SFML::Window SFML::System)

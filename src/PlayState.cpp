@@ -1,9 +1,41 @@
 #include "PlayState.hpp"
 #include <iostream>
 
+using T = TileType;
+
+static const std::vector<std::vector<TileType>> MAP = {
+    {T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Floor, T::Wall},
+    {T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall,  T::Wall},
+};
+
 PlayState::PlayState(sf::Texture& playerTexture, sf::Vector2u windowSize)
-    : player_(playerTexture, {400.f, 300.f}),
+    : tilemap_(32),
+      player_(playerTexture, {400.f, 300.f}),
       windowSize_(windowSize) {
+    tilemap_.load(MAP);
     enemies_.emplace_back(sf::Vector2f{100.f, 100.f});
 }
 
@@ -25,6 +57,7 @@ void PlayState::update(float dt) {
 }
 
 void PlayState::draw(sf::RenderTarget& target) {
+    tilemap_.draw(target);
     for (auto& enemy : enemies_)
         enemy.draw(target);
     player_.draw(target);

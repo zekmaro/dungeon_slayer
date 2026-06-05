@@ -5,11 +5,12 @@ class Player {
 public:
     Player(sf::Texture& texture, sf::Vector2f startPos);
 
-    void move(float dt);
-    void update(float dt);
+    sf::Vector2f getMoveDelta(float dt) const;
+    void applyMove(sf::Vector2f delta);
+    void tick(float dt);
     void draw(sf::RenderTarget& target);
-    void checkBounds(sf::Vector2u windowSize);
     void takeDamage();
+    void setPosition(sf::Vector2f pos);
 
     bool isDead() const;
     sf::FloatRect getBounds() const;

@@ -8,6 +8,7 @@ Tilemap::Tilemap(unsigned int tileSize)
       vertices_(sf::PrimitiveType::Triangles) {}
 
 void Tilemap::load(const std::vector<std::vector<TileType>>& grid) {
+    grid_ = grid;
     vertices_.clear();
 
     for (unsigned int row = 0; row < grid.size(); ++row) {
@@ -20,6 +21,13 @@ void Tilemap::load(const std::vector<std::vector<TileType>>& grid) {
 
 void Tilemap::draw(sf::RenderTarget& target) {
     target.draw(vertices_);
+}
+
+bool Tilemap::isWall(int col, int row) const {
+    if (row < 0 || col < 0) return true;
+    if (static_cast<size_t>(row) >= grid_.size()) return true;
+    if (static_cast<size_t>(col) >= grid_[row].size()) return true;
+    return grid_[row][col] == TileType::Wall;
 }
 
 unsigned int Tilemap::tileSize() const { return tileSize_; }

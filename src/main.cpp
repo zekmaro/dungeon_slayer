@@ -15,7 +15,7 @@ int main() {
     playerTexture.setSmooth(false);
 
     GameStateManager gsm;
-    gsm.push(std::make_unique<PlayState>(playerTexture, window.getSize()));
+    gsm.push(std::make_unique<PlayState>(playerTexture));
 
     sf::Clock clock;
 

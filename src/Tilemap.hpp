@@ -11,6 +11,7 @@ public:
     void load(const std::vector<std::vector<TileType>>& grid);
     void draw(sf::RenderTarget& target);
 
+    bool isWall(int col, int row) const;
     unsigned int tileSize() const;
 
 private:
@@ -18,4 +19,5 @@ private:
 
     unsigned int tileSize_;
     sf::VertexArray vertices_;
+    std::vector<std::vector<TileType>> grid_;
 };
